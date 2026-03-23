@@ -153,10 +153,35 @@ repo/
 
 ## 🚀 GitHub Release 要求
 
+### 多数据集拆分发布规则（重要！）
+
+如果原始数据集包含 **train / test / validation** 等明确划分的子集：
+
+- **必须分开成独立的 Release 文件上传**
+- **不要合并到一个 Release 中**
+
+**正确做法：**
+```
+Release: v1.0-train     → 只包含 train 数据
+Release: v1.0-test      → 只包含 test 数据  
+Release: v1.0-validation → 只包含 validation 数据
+```
+
+**错误做法：**
+```
+Release: v1.0-dataset   → 包含所有数据（❌ 不符合要求）
+```
+
+### 发布步骤
+
 Agent必须：
-1. 创建 tag `v1.0-dataset`
-2. 创建 Release
-3. 将所有处理后的 JSONL 分片作为附件上传
+1. 识别数据集中的 train / test / validation 划分
+2. 分别为每个子集创建独立的 tag：
+   - `v1.0-train`
+   - `v1.0-test`
+   - `v1.0-validation`
+3. 创建对应的 Release
+4. 将对应子集的 JSONL 分片上传到各自的 Release
 
 ---
 
