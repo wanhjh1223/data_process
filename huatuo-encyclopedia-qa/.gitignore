@@ -1,0 +1,16 @@
+# HuggingFace 缓存
+hf_cache/
+hf_data/
+
+# 处理后的完整数据（通过 Release 发布）
+processed_data/
+
+# 日志文件
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
