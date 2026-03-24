@@ -29,14 +29,14 @@ class MoralStoriesProcessor:
         # 添加 ID
         record_id = record.get('ID', 'unknown')
         
-        # 构建道德故事文本
-        parts.append(f"【道德规范】{record.get('norm', '')}")
-        parts.append(f"【情境】{record.get('situation', '')}")
-        parts.append(f"【意图】{record.get('intention', '')}")
-        parts.append(f"【道德行为】{record.get('moral_action', '')}")
-        parts.append(f"【道德后果】{record.get('moral_consequence', '')}")
-        parts.append(f"【不道德行为】{record.get('immoral_action', '')}")
-        parts.append(f"【不道德后果】{record.get('immoral_consequence', '')}")
+        # 构建道德故事文本 (英文冒号格式)
+        parts.append(f"norm: {record.get('norm', '')}")
+        parts.append(f"situation: {record.get('situation', '')}")
+        parts.append(f"intention: {record.get('intention', '')}")
+        parts.append(f"moral_action: {record.get('moral_action', '')}")
+        parts.append(f"moral_consequence: {record.get('moral_consequence', '')}")
+        parts.append(f"immoral_action: {record.get('immoral_action', '')}")
+        parts.append(f"immoral_consequence: {record.get('immoral_consequence', '')}")
         
         text = '\n'.join(parts)
         
