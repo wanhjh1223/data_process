@@ -1,227 +1,83 @@
-# CaseHOLD Pretraining Dataset
+# CaseHOLD Dataset Processing
 
 CaseHOLD (Case Holdings on Legal Decisions) 法律预训练数据集处理版本
 
 ## 📊 数据说明
 
-CaseHOLD 是 **LexGLUE** 基准测试中的法律多选题问答数据集，包含超过 53,000 条美国法院判决的裁决要点识别任务。
+- **来源**: Harvard Law Library case law corpus (1965-present)
+- **原始规模**: 训练集 45,000 / 验证集 3,900
+- **任务类型**: 多选题问答 (Multiple Choice QA)
 
-| 属性 | 说明 |
-|------|------|
-| **来源** | Harvard Law Library case law corpus (1965-present) |
-| **原始规模** | 训练集 45,000 / 验证集 3,900 / 测试集 3,900 |
-| **任务类型** | 多选题问答 (Multiple Choice QA) |
-| **核心任务** | 根据案例引用识别正确的法律裁决要点 (holding) |
+## 📁 输出格式
 
-## 📁 文件结构
+标准 JSONL 格式，每行一个 JSON 对象：
 
-### 从 Release 下载 (推荐)
+```json
+{"id": "openclaw_00000001", "type": "pretrain", "text": "训练文本内容"}
+```
 
-训练集文件 (>100MB) 已上传至 GitHub Release：
-
-**📥 Release 地址**: https://github.com/wanhjh1223/data_process/releases/tag/casehold-v1.0
-
-| 文件 | 大小 | 说明 |
+| 字段 | 类型 | 说明 |
 |------|------|------|
-| `train_triplet.jsonl` | 122 MB | 训练集 - 三联体格式 |
-| `train_instruction.jsonl` | 120 MB | 训练集 - 指令格式 |
-| `train_contrastive.jsonl` | 111 MB | 训练集 - 对比学习格式 |
-| `validation_triplet.jsonl` | 11 MB | 验证集 - 三联体格式 |
-| `validation_instruction.jsonl` | 11 MB | 验证集 - 指令格式 |
-| `validation_contrastive.jsonl` | 10 MB | 验证集 - 对比学习格式 |
+| `id` | string | 全局唯一ID，格式 `openclaw_{8位数字}` |
+| `type` | string | 数据类型：`pretrain` |
+| `text` | string | 训练文本（案例引用 + 正确holding） |
 
-### 本地仓库文件
+## 📂 文件结构
 
 ```
 casehold_processed/
-├── README.md                          # 本文件
-├── train_triplet.jsonl.gz            # 训练集 - 三联体格式 (压缩备份)
-├── validation_triplet.jsonl          # 验证集 - 三联体格式
-├── train_instruction.jsonl.gz        # 训练集 - 指令格式 (压缩备份)
-├── validation_instruction.jsonl      # 验证集 - 指令格式
-├── train_contrastive.jsonl.gz        # 训练集 - 对比学习格式 (压缩备份)
-├── validation_contrastive.jsonl      # 验证集 - 对比学习格式
-└── scripts/
-    └── process_casehold.py           # 数据处理脚本
+├── scripts/
+│   └── process_casehold.py    # 数据处理脚本
+├── examples/                   # 示例数据（≤100条）
+│   ├── train_examples.jsonl
+│   └── validation_examples.jsonl
+├── processed/                  # 完整数据（不上传到repo）
+│   ├── train_part_00000.jsonl.gz
+│   └── validation_part_00000.jsonl.gz
+├── task_spec.md               # 任务规范
+└── README.md                  # 本文件
 ```
 
-## 🔗 数据格式
+## 📥 下载数据
 
-### 1. 三联体格式 (Triplet) - 推荐用于法律领域预训练
+完整数据集通过 GitHub Release 分发：
 
-```json
-{
-  "case_citation": "案例引用文本（不含holding）",
-  "holding": "正确的法律裁决要点",
-  "explanation": "解释说明",
-  "legal_principle": "涉及的法律原则",
-  "distractors": ["干扰项1", "干扰项2", "干扰项3", "干扰项4"],
-  "full_text": "完整文本（holding已填充）"
-}
-```
+- **Train**: https://github.com/wanhjh1223/data_process/releases/tag/casehold-v1.0-train
+- **Validation**: https://github.com/wanhjh1223/data_process/releases/tag/casehold-v1.0-validation
 
-**用途**: 构建"案例-裁决-解释"结构，符合法律领域预训练的最佳实践
-
-### 2. 指令格式 (Instruction) - 用于 SFT 微调
-
-```json
-{
-  "instruction": "根据以下法院判决引用，确定正确的法律裁决要点：",
-  "input": "案例文本 + 5个选项",
-  "output": "正确答案是：A. xxx",
-  "label": 0,
-  "choices": ["选项A", "选项B", "选项C", "选项D", "选项E"]
-}
-```
-
-**用途**: 指令微调 (Supervised Fine-Tuning)
-
-### 3. 对比学习格式 (Contrastive) - 用于检索模型
-
-```json
-{
-  "anchor": "案例引用（查询）",
-  "positive": "正确的holding（正样本）",
-  "hard_negatives": ["错误选项1", "错误选项2", "错误选项3", "错误选项4"],
-  "full_context": "完整上下文"
-}
-```
-
-**用途**: 
-- 训练法律文档 Embedding 模型
-- RAG 检索系统训练
-- **注意**: CaseHOLD 的干扰项是高质量难负样本！
-
-## 🚀 快速开始
-
-### 加载数据
+## 🚀 使用方法
 
 ```python
-import json
 import gzip
+import json
 
-# 加载压缩的训练集
-with gzip.open("train_triplet.jsonl.gz", "rt", encoding="utf-8") as f:
-    train_triplets = [json.loads(line) for line in f]
-
-# 加载未压缩的验证集
-with open("validation_triplet.jsonl", "r", encoding="utf-8") as f:
-    val_triplets = [json.loads(line) for line in f]
+# 加载压缩数据
+with gzip.open('train_part_00000.jsonl.gz', 'rt', encoding='utf-8') as f:
+    for line in f:
+        data = json.loads(line)
+        print(data['id'], data['text'][:100])
 ```
 
-### 使用 Datasets 库 (推荐)
+## 📈 处理统计
 
-```python
-from datasets import load_dataset
+| 划分 | 原始样本 | 处理后样本 | Shard数 |
+|------|----------|------------|---------|
+| Train | 45,000 | 45,000 | 1 |
+| Validation | 3,900 | 3,900 | 1 |
 
-# Datasets 库自动识别压缩格式
-dataset = load_dataset("json", data_files={
-    "train": "train_triplet.jsonl.gz",
-    "validation": "validation_triplet.jsonl"
-})
-```
-
-### 解压使用
+## 🔧 重新处理
 
 ```bash
-# 解压所有 .gz 文件
-gunzip *.gz
-
-# 现在可以直接加载
-with open("train_triplet.jsonl", "r") as f:
-    data = [json.loads(line) for line in f]
-```
-
-## 💡 使用建议
-
-### 场景1: 法律领域继续预训练
-```python
-# 数据混合比例建议
-- FineWeb-Edu (通用): 70%
-- 法律语料 (Legal-BERT等): 20%
-- CaseHOLD 三联体: 10%
-
-# 使用格式: train_triplet.jsonl 中的 full_text 字段
-```
-
-### 场景2: 法律指令微调 (SFT)
-```python
-# 直接使用指令格式
-# train_instruction.jsonl + validation_instruction.jsonl
-```
-
-### 场景3: 法律检索系统 (RAG)
-```python
-# 使用对比学习格式
-# anchor 作为 query
-# positive 作为 target document
-# hard_negatives 作为难负样本
-```
-
-### 场景4: 法考推理能力训练
-```python
-# 基于三联体格式合成 Chain-of-Thought 数据
-# 构建"案例 → 分析 → 结论"推理链
-```
-
-## 📈 数据特点
-
-1. **高质量难负样本**: 4 个干扰项都是语义相似的真实 holding，不是随机生成的
-2. **时间划分**: 按时间顺序划分 train/dev/test，避免数据泄漏
-3. **法律专业性**: 涉及美国各级法院判决，覆盖多个法律领域
-4. **适合多种任务**: 分类、检索、生成、推理
-
-## ⚠️ 注意事项
-
-1. **测试集隔离**: 测试集 (3,900条) 未包含在本处理版本中，仅用于最终评估
-2. **仅用于研究**: 本数据集仅供学术研究使用
-3. **建议混合使用**: 单独使用 CaseHOLD 规模较小，建议与其他法律语料混合
-
-## 🔧 重新处理数据
-
-如果需要重新处理原始数据：
-
-```bash
-# 安装依赖
-pip install datasets
-
-# 运行处理脚本
 python scripts/process_casehold.py
 ```
 
-## 📚 相关数据集
-
-- **LexGLUE**: https://huggingface.co/datasets/lex_glue
-- **Legal-BERT**: https://huggingface.co/nlpaueb/legal-bert-base-uncased
-- **LEDGAR**: 合同条款分类数据集
-- **SCOTUS**: 美国最高法院判决数据集
-
-## 📖 引用
-
-如果您使用了本数据集，请引用：
+## 📚 引用
 
 ```bibtex
 @inproceedings{zheng2021casehold,
-  title={When Does Pretraining Help? Assessing Self-Supervised Learning for Law and the CaseHOLD Dataset of 53,000+ Legal Holdings},
+  title={When Does Pretraining Help? Assessing Self-Supervised Learning for Law and the CaseHOLD Dataset},
   author={Zheng, Lucille and Guha, Neel and Anderson, Brandon and Henderson, Peter and Ho, Daniel E},
-  booktitle={Proceedings of the Eighteenth International Conference on Artificial Intelligence and Law},
-  pages={159--168},
+  booktitle={ICAIL},
   year={2021}
 }
-
-@inproceedings{chalkidis2022lexglue,
-  title={LexGLUE: A Benchmark Dataset for Legal Language Understanding in English},
-  author={Chalkidis, Ilias and Fergadiotis, Manos and Malakasiotis, Prodromos and Aletras, Nikolaos and Androutsopoulos, Ion},
-  booktitle={Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics},
-  pages={4310--4329},
-  year={2022}
-}
 ```
-
-## 📄 许可证
-
-原始 CaseHOLD 数据集遵循原论文的许可证。本处理版本仅改变数据格式，不修改原始内容。
-
----
-
-**最后更新**: 2026-03-24
