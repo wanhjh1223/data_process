@@ -1,0 +1,7 @@
+{
+  "dataset": "desimfj/PHYSICS",
+  "test": {
+    "processed": 2000,
+    "shards": 1
+  }
+}
