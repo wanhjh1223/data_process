@@ -1,0 +1,11 @@
+{
+  "anchor": "...the Supreme Court held that the Fourth Amendment does not require police to obtain a search warrant before searching a vehicle they have probable cause to believe contains evidence of a crime, Carroll v. United States, 267 U.S. 132 (1925), and California v. Carney, 471 U.S. 386, 390 (1985). However, the warrantless search must be reasonable in scope and based on probable cause...",
+  "positive": "the warrantless search of a vehicle is permissible under the Fourth Amendment when based on probable cause",
+  "hard_negatives": [
+    "all warrantless searches violate the Fourth Amendment",
+    "probable cause is never sufficient for a search",
+    "vehicles are protected by the same warrant requirements as homes",
+    "the Fourth Amendment does not apply to vehicles"
+  ],
+  "full_context": "...the Supreme Court held that the Fourth Amendment does not require police to obtain a search warrant before searching a vehicle they have probable cause to believe contains evidence of a crime (the warrantless search of a vehicle is permissible under the Fourth Amendment when based on probable cause), Carroll v. United States, 267 U.S. 132 (1925)..."
+}

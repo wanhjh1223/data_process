@@ -1,0 +1,13 @@
+{
+  "instruction": "根据以下法院判决引用，确定正确的法律裁决要点：",
+  "input": "...see United States v. Wright-Barker, 784 F.2d 161, 176 (3d Cir.1986) [HOLDING], superseded by statute on other grounds as stated in United States v. Edmond, 431 U.S. 606, 615 n.8 (1977)...\n\n选项：\nA. the Coast Guard may conduct warrantless searches of American vessels\nB. the Coast Guard lacks jurisdiction over foreign vessels\nC. warrants are required for all maritime inspections\nD. reasonable suspicion is never required for searches\nE. the Fourth Amendment applies differently at sea",
+  "output": "正确答案是：A. the Coast Guard may conduct warrantless searches of American vessels",
+  "label": 0,
+  "choices": [
+    "the Coast Guard may conduct warrantless searches of American vessels",
+    "the Coast Guard lacks jurisdiction over foreign vessels",
+    "warrants are required for all maritime inspections",
+    "reasonable suspicion is never required for searches",
+    "the Fourth Amendment applies differently at sea"
+  ]
+}
