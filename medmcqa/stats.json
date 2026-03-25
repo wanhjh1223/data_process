@@ -1,20 +1,25 @@
 {
   "dataset": "openlifescienceai/medmcqa",
+  "format": "instruction",
   "splits": {
     "train": {
       "processed": 182822,
       "shards": 2,
-      "skipped": 0
+      "skipped": 0,
+      "total": 182822
     },
     "validation": {
       "processed": 4183,
       "shards": 1,
-      "skipped": 0
+      "skipped": 0,
+      "total": 4183
     },
     "test": {
       "processed": 6150,
       "shards": 1,
-      "skipped": 0
+      "skipped": 0,
+      "total": 6150
     }
-  }
+  },
+  "total_processed": 193155
 }
