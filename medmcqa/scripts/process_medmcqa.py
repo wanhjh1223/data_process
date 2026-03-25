@@ -25,15 +25,11 @@ CACHE_DIR = Path.home() / ".cache/huggingface/hub/datasets--openlifescienceai--m
 
 
 def format_record(ex, global_id):
-    """将单条记录格式化为指令微调格式"""
+    """将单条记录格式化为指令微调格式（仅处理 single choice）"""
     question = str(ex.get("question", "")).strip()
     
-    # 获取题目类型 (single/multi)
-    choice_type = str(ex.get("choice_type", "single"))
-    if choice_type == "multi":
-        instruction_prefix = "There is a multi choice question about medical. Answer the question by replying A, B, C or D."
-    else:
-        instruction_prefix = "There is a single choice question about medical. Answer the question by replying A, B, C or D."
+    # 仅处理 single choice 类型
+    instruction_prefix = "There is a single choice question about medical. Answer the question by replying A, B, C or D."
     
     # 获取选项
     opa = str(ex.get("opa", "")).strip()
@@ -93,8 +89,14 @@ def process_split(split_name, parquet_path, output_dir, start_id=1):
     # 流式读取 parquet
     print(f"  📖 读取 parquet 文件...")
     df = pd.read_parquet(parquet_path)
+    total_raw = len(df)
+    
+    # 过滤掉 multi 类型样本（数据存在不一致性）
+    print(f"  🔄 过滤 multi choice 样本...")
+    df = df[df['choice_type'] == 'single']
     total = len(df)
-    print(f"  ✅ 共 {total:,} 条数据")
+    filtered = total_raw - total
+    print(f"  ✅ 共 {total:,} 条 (过滤掉 {filtered:,} 条 multi 类型)")
     
     # 处理数据
     current_shard = []
@@ -199,13 +201,15 @@ def main():
         all_stats[split_name] = stats
         current_id = stats["next_id"]
     
-    # 生成示例文件（从 train 取前100条）
+    # 生成示例文件（从 train 取前100条 single choice）
     print("\n📄 生成示例文件...")
     examples = []
     try:
         train_path = splits["train"]
         if train_path.exists():
             df = pd.read_parquet(train_path)
+            # 过滤 single choice
+            df = df[df['choice_type'] == 'single']
             for i in range(min(100, len(df))):
                 record = format_record(df.iloc[i], i + 1)
                 if len(record["text"]) >= 50:

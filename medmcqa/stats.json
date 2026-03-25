@@ -3,23 +3,23 @@
   "format": "instruction",
   "splits": {
     "train": {
-      "processed": 182822,
+      "processed": 120765,
       "shards": 2,
       "skipped": 0,
-      "total": 182822
+      "total": 120765
     },
     "validation": {
-      "processed": 4183,
+      "processed": 2816,
       "shards": 1,
       "skipped": 0,
-      "total": 4183
+      "total": 2816
     },
     "test": {
-      "processed": 6150,
+      "processed": 4134,
       "shards": 1,
       "skipped": 0,
-      "total": 6150
+      "total": 4134
     }
   },
-  "total_processed": 193155
+  "total_processed": 127715
 }
