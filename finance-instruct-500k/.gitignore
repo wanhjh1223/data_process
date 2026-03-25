@@ -1,0 +1,15 @@
+# 原始数据
+modelscope_data/
+raw_data/
+*.parquet
+
+# 处理后的数据（通过 Release 发布）
+processed/
+
+# 临时文件
+*.log
+.DS_Store
+__MACOSX/
+
+# 大文件
+train.json

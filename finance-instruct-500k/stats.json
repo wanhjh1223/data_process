@@ -1,0 +1,7 @@
+{
+  "dataset": "Josephgflowers/Finance-Instruct-500k",
+  "source": "modelscope:Data-by-IngeniusAI/Finance-Instruct-500k",
+  "processed_count": 2341,
+  "shards": 1,
+  "skipped": 35
+}
