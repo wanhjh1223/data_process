@@ -50,9 +50,24 @@ python3 scripts/process_scienceqa.py
 - 每个shard最大: 100,000条记录
 - 超长文本自动按句子边界切分
 
-## GitHub Release 上传
+## GitHub Release 下载
 
-按不同split分别创建Release:
-- `v1.0-train` - 训练集
-- `v1.0-validation` - 验证集
-- `v1.0-test` - 测试集
+处理后的数据文件已通过GitHub Release发布：
+
+| Split | 样本数 | 下载链接 |
+|-------|--------|----------|
+| Train | 12,726 | [scienceqa_train.jsonl.gz](https://github.com/wanhjh1223/data_process/releases/download/scienceqa-v1.0-train/scienceqa_train.jsonl.gz) |
+| Validation | 4,241 | [scienceqa_validation.jsonl.gz](https://github.com/wanhjh1223/data_process/releases/download/scienceqa-v1.0-validation/scienceqa_validation.jsonl.gz) |
+| Test | 4,241 | [scienceqa_test.jsonl.gz](https://github.com/wanhjh1223/data_process/releases/download/scienceqa-v1.0-test/scienceqa_test.jsonl.gz) |
+
+**Release页面**: https://github.com/wanhjh1223/data_process/releases
+
+### 统计数据
+- 总样本数: 21,208
+- 格式: JSONL (gzip压缩)
+- 字段: `id`, `type`, `text`
+
+## 原始数据
+
+- 数据来源: [derek-thomas/ScienceQA](https://huggingface.co/datasets/derek-thomas/ScienceQA) (HuggingFace)
+- 数据集类型: 多模态科学问答数据集
