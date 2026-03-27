@@ -1,0 +1,25 @@
+{
+  "total_original": 21208,
+  "total_processed": 21208,
+  "skipped": 0,
+  "splits": {
+    "train": {
+      "original": 12726,
+      "processed": 12726,
+      "skipped": 0,
+      "shards": 1
+    },
+    "validation": {
+      "original": 4241,
+      "processed": 4241,
+      "skipped": 0,
+      "shards": 1
+    },
+    "test": {
+      "original": 4241,
+      "processed": 4241,
+      "skipped": 0,
+      "shards": 1
+    }
+  }
+}

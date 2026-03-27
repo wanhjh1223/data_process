@@ -1,0 +1,19 @@
+# 不提交大文件
+*.parquet
+*.jsonl
+*.jsonl.gz
+
+# 临时文件
+*.log
+.cache/
+raw/
+output/
+
+# 但保留examples目录
+!examples/
+!examples/*.jsonl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
